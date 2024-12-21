@@ -33,5 +33,13 @@ export const useAuthStore = create((set) => ({
     } finally {
       set({isSigningUp: false});
     }
+  },
+  logout:async ()=>{
+    try{
+
+    }catch(error){
+      console.log("Error in Logout" , error);
+      toast.error("Failed to logout");
+    }
   }
 }));
