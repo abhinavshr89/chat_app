@@ -1,29 +1,29 @@
-import {create} from 'zustand';
-import { axiosInstance } from '../lib/axios';
-import toast from 'react-hot-toast';
+import { create } from "zustand";
+import { axiosInstance } from "../lib/axios";
+import toast from "react-hot-toast";
 export const useAuthStore = create((set) => ({
   authUser: null,
   isSigningUp: false,
   isLoggingIn: false,
   isUpdatingProfile: false,
   isCheckingAuth: true,
-  checkAuth: async () =>{
-    try{
+  checkAuth: async () => {
+    try {
       const res = await axiosInstance.get("/auth/check");
-      set({authUser: res.data});
-    }catch(error){
-      console.log("Error in CheckAuth" , error);
+      set({ authUser: res.data });
+    } catch (error) {
+      console.log("Error in CheckAuth", error);
       toast.error("Failed to check authentication status");
-    }finally{
-      set({isCheckingAuth: false});
+    } finally {
+      set({ isCheckingAuth: false });
     }
   },
-  signup: async (data) =>{
-    set({isSigningUp: true});
+  signup: async (data) => {
+    set({ isSigningUp: true });
     try {
       const res = await axiosInstance.post("/auth/signup", data);
       toast.success("Account created successfully");
-      set({authUser: res.data});
+      set({ authUser: res.data });
     } catch (error) {
       if (error.response) {
         toast.error(error.response.data.message);
@@ -31,15 +31,49 @@ export const useAuthStore = create((set) => ({
         toast.error("An unexpected error occurred");
       }
     } finally {
-      set({isSigningUp: false});
+      set({ isSigningUp: false });
     }
   },
-  logout:async ()=>{
-    try{
-
-    }catch(error){
-      console.log("Error in Logout" , error);
+  logout: async () => {
+    try {
+      await axiosInstance.post("/auth/logout");
+      set({ authUser: null });
+      toast.success("Logged Out successfully");
+    } catch (error) {
+      console.log("Error in Logout", error);
       toast.error("Failed to logout");
     }
-  }
+  },
+  login: async (data) => {
+    set({ isLoggingIn: true });
+    try {
+      const res = await axiosInstance.post("/auth/login", data);
+      toast.success("Logged in successfully");
+      set({ authUser: res.data });
+    } catch (error) {
+      if (error.response) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    } finally {
+      set({ isLoggingIn: false });
+    }
+  },
+  updateProfile: async (data) => {
+    set({ isUpdatingProfile: true });
+    try {
+      const res = await axiosInstance.put("/auth/update-profile", data);
+      toast.success("Profile updated successfully");
+      set({ authUser: res.data });
+    } catch (error) {
+      if (error.response) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    } finally {
+      set({ isUpdatingProfile: false });
+    }
+  },
 }));
