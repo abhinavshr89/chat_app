@@ -1,0 +1,12 @@
+{
+  "name": "chat_app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build":"",
+    "start":""
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
