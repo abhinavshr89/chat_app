@@ -6,6 +6,7 @@ import connectDB from "./lib/db.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { app ,server } from "./lib/socket.js";
+import path from "path";
 
 app.use(cors({
   origin: 'http://localhost:5173',
@@ -14,6 +15,8 @@ app.use(cors({
 
 dotenv.config();
 
+const __dirname = path.resolve();
+const port = process.env.PORT || 5002;
 
 app.use(cookieParser());
 app.use(express.json())
@@ -21,8 +24,13 @@ app.use(express.json())
 app.use("/api/auth", authRoutes);
 app.use("/api/message",messageRoutes);
 
-const port = process.env.PORT || 5002;
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+  });
+}
 
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
